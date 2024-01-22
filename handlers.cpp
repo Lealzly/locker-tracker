@@ -43,12 +43,12 @@ void help(std::string helpArgs)
     }
 }
 
-void printOwner(json owner_json)
+void printOwner(json owner_json)    
 {
-    PrintColor(BLUE, "Owner:");
-    if (owner_json.is_null())
+    PrintColor(BLUE, "Owner:");                  
+    if (owner_json.is_null()) //looks for who owns the selected locker, if there is no name assigned to that locker It will display in red text "This Locker has no Owner" a few spaces after "Owner:" which is displayed in blue  
     {
-        PrintColor(RED, std::string(SOFTTAB) + "This Locker has no Owner");
+        PrintColor(RED, std::string(SOFTTAB) + "This Locker has no Owner");  
         return;
     }
     std::string student_name = owner_json["name"].get<std::string>();
@@ -91,7 +91,7 @@ void info(std::string infoArgs)
 void clear(std::string clearArgs)
 {
     std::system(CLEAR);
-    std::cout << GREEN << "Console Cleared" << RESET << std::endl;
+    std::cout << GREEN << "Console Cleared" << RESET << std::endl;  
 }
 
 void list(std::string listArgs) {}
