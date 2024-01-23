@@ -31,32 +31,32 @@ public:
     FunctionType ActionCall;
 
     Command(std::string newName, std::string newDescription, std::string newUsage, FunctionType func)
-        : name(newName), description(newDescription), usage(newUsage), ActionCall(func) {}
+        : name(newName), description(newDescription), usage(newUsage), ActionCall(func) {} 
 };
 
 std::vector<Command> command_list;
 
 void help(std::string helpArgs)
 {
-    for (const Command cmd : command_list)
+    for (const Command cmd : command_list) 
     {
-        std::cout << cmd.name << "\t" << GREEN << cmd.description << std::endl
+        std::cout << cmd.name << "\t" << GREEN << cmd.description << std::endl     
                   << BLUE << "\tUsage: " << cmd.usage << RESET << std::endl;
     }
 }
 
-void printOwner(json owner_json)
+void printOwner(json owner_json)  //contains the lockers numbers, locations and if they have owners
 {
-    PrintColor(BLUE, "Owner:");
-    if (owner_json.is_null())
+    PrintColor(BLUE, "Owner:"); // if "Owner" has a name assined it will be blue, if not do the following
+    if (owner_json.is_null()) 
     {
-        PrintColor(RED, std::string(SOFTTAB) + "This Locker has no Owner");
+        PrintColor(RED, std::string(SOFTTAB) + "This Locker has no Owner");   //If the locker selected has no owner assigned to it, the code Displays "Owner: " in blue text followed by "This locker has no owner" which is 3 spaces away and in red text 3 
         return;
     }
-    std::string student_name = owner_json["name"].get<std::string>();
+    std::string student_name = owner_json["name"].get<std::string>();  // If the above code is false, this code gets the interger form "name" from "Owner__file" and store it as the students name, then takes another interger from "grade" in "Owner__jason" and stores it as the students grade 
     int student_grade = owner_json["grade"].get<int>();
-    std::cout << SOFTTAB << BLUE << "Name: " << RESET << student_name << std::endl
-              << SOFTTAB << BLUE << "Grade: " << RESET << student_grade << "%" << std::endl;
+    std::cout << SOFTTAB << BLUE << "Name: " << RESET << student_name << std::endl  // leaves 3 spaces before "Name:", reseting the text colour to blue and then displays the Name assigned 
+    << SOFTTAB << BLUE << "Grade: " << RESET << student_grade << "%" << std::endl;   // leaves 3 spaces before "Grade" and restest the text back to blue, displays the assigned grade followed by a % sign
 }
 
 void info(std::string infoArgs)
@@ -78,15 +78,15 @@ void info(std::string infoArgs)
             locker_value = value;
         }
     }
-    std::cout << BLUE << "Number #: " << RESET << locker_value["lockerNumber"].get<int>() << std::endl
-              << BLUE << "Hallway: " << RESET << locker_value["Hallway"].get<std::string>() << std::endl;
-    printOwner(locker_value["Owner"]);
+    std::cout << BLUE << "Number #: " << RESET << locker_value["lockerNumber"].get<int>() << std::endl // gets the interger from "lockerNumber" from the locker_value, reseting the "Number #: " back to blue text
+              << BLUE << "Hallway: " << RESET << locker_value["Hallway"].get<std::string>() << std::endl; //gets the interger from "hallway" from the locker_value and displays "Hallway: " in blue text
+    printOwner(locker_value["Owner"]); 
 }
 
 void clear(std::string clearArgs)
 {
-    std::system(CLEAR);
-    std::cout << GREEN << "Console Cleared" << RESET << std::endl;
+    std::system(CLEAR);  
+    std::cout << GREEN << "Console Cleared" << RESET << std::endl;  
 }
 
 void list(std::string listArgs)
@@ -125,20 +125,20 @@ void list(std::string listArgs)
         for (auto &el : data)
         {
             index++;
-            if (el["Floor"].get<int>() != floor)
+            if (el["Floor"].get<int>() != floor) 
             {
                 data.erase(index);
             }
         }
     }
-    if (std::regex_search(listArgs, match, hallway_regex))
+    if (std::regex_search(listArgs, match, hallway_regex)) 
     {
         std::string hallway_string(match.str());
         int index = -1;
         for (auto &el : data)
         {
             index++;
-            if (el["Hallway"].get<std::string>() != hallway_string)
+            if (el["Hallway"].get<std::string>() != hallway_string) 
             {
                 data.erase(index);
             }
