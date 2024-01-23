@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string>
+#include <sstream>
+#include <vector>
 #include "assets.cpp"
 
 int stringToInt(std::string string)
@@ -26,4 +28,16 @@ void Error(std::string message, bool exitProgram)
     PrintColor(RED, message);
     if (exitProgram)
         exit(1);
+}
+
+std::vector<std::string> stringSplit(std::string string, char split_char)
+{
+    std::istringstream iss(string);
+    std::string token;
+    std::vector<std::string> tokens;
+    while (std::getline(iss, token, split_char))
+    {
+        tokens.push_back(token);
+    }
+    return tokens;
 }

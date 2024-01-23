@@ -5,6 +5,7 @@
 #include <sstream>
 #include <functional>
 #include <fstream>
+#include <regex>
 #include "assets.cpp"
 #define OPTIONAL_PREFIX "--"
 #ifdef __linux__
@@ -19,6 +20,7 @@
 
 using json = nlohmann::json;
 using FunctionType = std::function<void(std::string)>;
+std::ifstream f("students.json");
 
 class Command
 {
@@ -59,22 +61,15 @@ void printOwner(json owner_json)
 
 void info(std::string infoArgs)
 {
-    std::istringstream iss(infoArgs);
-    std::string token;
-    std::vector<std::string> tokens;
-    while (std::getline(iss, token, ' '))
-    {
-        tokens.push_back(token);
-    }
+    std::vector<std::string> tokens = stringSplit(infoArgs, ' ');
     if (tokens.size() != 2)
     {
         Error("Incorrect number of arguments", false);
         return;
     }
     int lockerNumber = stringToInt(tokens[1]);
-    std::ifstream f("students.json");
-    json data = json::parse(f);
     json locker_value;
+    json data = json::parse(f);
     for (auto &el : data.items())
     {
         json value = el.value();
@@ -94,4 +89,59 @@ void clear(std::string clearArgs)
     std::cout << GREEN << "Console Cleared" << RESET << std::endl;
 }
 
-void list(std::string listArgs) {}
+void list(std::string listArgs)
+{
+    std::regex range_regex("(?<=--range(\\s|=))([0-9]+-[0-9]+)");
+    std::regex floor_regex("(?<=--floor(\\s|=))([0-9])");
+    std::regex hallway_regex("(?<=--hallway(\\s|=))(\\w+)");
+    json data = json::parse(f);
+    std::smatch match;
+
+    if (std::regex_search(listArgs, match, range_regex))
+    {
+        std::vector<std::string> tokens = splitString(match.str(), "-");
+        if (tokens.size() != 2)
+        {
+            Error("Incorrect number of arguments", false);
+            return;
+        }
+        int bottomRange = stringToInt(tokens[0]);
+        int topRange = stringToInt(tokens[1]);
+        int index = -1;
+        for (auto &el : data)
+        {
+            index++;
+            int locker_number = el["lockerNumber"].get<int>();
+            if (locker_number > topRange || locker_number < bottomRange)
+            {
+                data.erase(index);
+            }
+        }
+    }
+    if (std::regex_search(listArgs, match, floor_regex))
+    {
+        int floor = stringToInt(match.str());
+        int index = -1;
+        for (auto &el : data)
+        {
+            index++;
+            if (el["Floor"].get<int>() != floor)
+            {
+                data.erase(index);
+            }
+        }
+    }
+    if (std::regex_search(listArgs, match, hallway_regex))
+    {
+        std::string hallway_string(match.str());
+        int index = -1;
+        for (auto &el : data)
+        {
+            index++;
+            if (el["Hallway"].get<std::string>() != hallway_string)
+            {
+                data.erase(index);
+            }
+        }
+    }
+}
